@@ -25,12 +25,14 @@ public abstract class TraceDB {
 
     private String jdbcPassword = "";
     public TraceDB() {
+        updateDbDirProperty();
         this.connection = getConnection();
     }
 
     public TraceDB(String dbFilePath) {
         this.jdbcURL =  "jdbc:h2:" + dbFilePath + h2Options;
         setDbDir(dbFilePath);
+        updateDbDirProperty();
         this.connection = getConnection();
     }
 
@@ -145,5 +147,13 @@ public abstract class TraceDB {
 
     public void setDbDir(String dbDir) {
         this.dbDir = dbDir;
+    }
+
+    /**
+     * Update system properties to include dbDir information so that JUnit Listeners that work on the DB have access.
+     */
+    private void updateDbDirProperty() {
+        System.setProperty("dbFilePath", this.dbDir);
+        System.err.println("Set dbFilePath to: " + System.getProperty("dbFilePath"));
     }
 }
