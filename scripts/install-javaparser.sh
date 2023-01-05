@@ -1,5 +1,6 @@
 (
-    cd /tmp
+    mkdir -p javaparser-tmp
+    cd javaparser-tmp
     git clone https://github.com/javaparser/javaparser.git
     (
         cd javaparser
@@ -8,4 +9,5 @@
         rm javaparser-core/src/main/java/com/github/javaparser/ast/Node.java.bak
         mvn install -DskipTests -DskipITs
     )
+    rm -rf javaparser-tmp
 )
