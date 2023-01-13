@@ -34,6 +34,7 @@ public class TraceUtil {
 
     public static void updateLocationMapFromFile(File locationMapFile) {
         if (!locationMapFile.exists()) return;
+        System.out.println("TraceUtil.java: Updating LocationMap...");
         String line;
         int largestId = freshID;
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
@@ -47,9 +48,12 @@ public class TraceUtil {
                 }
             }
         } catch (FileNotFoundException ex) { // ignore if we can't read
+            System.out.println("TraceUtil.java: exception from updating locations");
         } catch (IOException ex) {
+            System.out.println("TraceUtil.java: exception from updating locations");
         }
         freshID = largestId;
+        System.out.println("TraceUtil.java: Updated LocationMap, freshID is " + freshID);
     }
 
     public static Map<String, Integer> getLocationMap() {
