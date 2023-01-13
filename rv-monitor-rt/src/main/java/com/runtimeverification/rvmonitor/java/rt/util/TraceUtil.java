@@ -37,13 +37,14 @@ public class TraceUtil {
     public static void updateLocationMapFromFile(File locationMapFile) {
         if (!locationMapFile.exists()) return;
         System.out.println("TraceUtil.java: Updating LocationMap... File: " + locationMapFile);
-        String line;
+        String line = "line";
         int largestId = freshID;
+        System.out.println("LENGTH: " + locationMapFile.length());
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("===")) continue; // skip the first line
                 System.out.println("Line: " + line);
                 String[] splits = line.split("\\s+");
+                if (splits.length < 2) continue; // skip the first line
                 String shortLocation = splits[0];
                 int id = Integer.valueOf(splits[1]);
                 System.out.println("Line: " + line);
