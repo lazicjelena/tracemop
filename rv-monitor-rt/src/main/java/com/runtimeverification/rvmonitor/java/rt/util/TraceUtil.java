@@ -36,29 +36,25 @@ public class TraceUtil {
 
     public static void updateLocationMapFromFile(File locationMapFile) {
         if (!locationMapFile.exists()) return;
-        System.out.println("TraceUtil.java: Updating LocationMap... File: " + locationMapFile);
         String line;
         int largestId = freshID;
-        System.out.println("LENGTH: " + locationMapFile.length());
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("===")) continue; // skip the first line
-                System.out.println("Line: " + line);
+                if (line.startsWith("===")) continue; // skip the first line, it doesn't contain map info
                 String[] splits = line.split("\\s+");
                 String shortLocation = splits[1];
                 int id = Integer.valueOf(splits[0]);
                 locationMap.put(shortLocation, id);
-                System.out.println("Put " + shortLocation + " --> " + id);
                 if (id > largestId) {
                     largestId = id;
                 }
             }
         } catch (FileNotFoundException ex) { // ignore if we can't read
-            System.out.println("TraceUtil.java: exception from updating locations");
+            System.out.println("TraceUtil.java: exception while updating locations");
         } catch (IOException ex) {
-            System.out.println("TraceUtil.java: exception from updating locations");
+            System.out.println("TraceUtil.java: exception while updating locations");
         }
-        freshID = largestId;
+        freshID = largestId + 1;
         System.out.println("TraceUtil.java: Updated LocationMap, freshID is " + freshID);
     }
 
