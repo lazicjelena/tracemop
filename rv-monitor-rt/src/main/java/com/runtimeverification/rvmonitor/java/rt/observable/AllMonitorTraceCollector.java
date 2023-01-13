@@ -25,12 +25,12 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
         super(writer, dbPath);
         this.doAnalysis = doAnalysis;
         this.writeLocationMap = writeLocationMap;
+        TraceUtil.updateLocationMapFromFile(locationMapFile);
         try {
             this.locationMapWriter = new PrintWriter(locationMapFile);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
-        TraceUtil.updateLocationMapFromFile(locationMapFile);
     }
 
     @Override
