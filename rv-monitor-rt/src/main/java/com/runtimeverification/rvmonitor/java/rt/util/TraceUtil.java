@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.h2.util.json.JSONValidationTargetWithoutUniqueKeys;
+
 public class TraceUtil {
 
     private static Map<String, Integer> locationMap = new HashMap<>();
@@ -34,15 +36,19 @@ public class TraceUtil {
 
     public static void updateLocationMapFromFile(File locationMapFile) {
         if (!locationMapFile.exists()) return;
-        System.out.println("TraceUtil.java: Updating LocationMap...");
+        System.out.println("TraceUtil.java: Updating LocationMap... File: " + locationMapFile);
         String line;
         int largestId = freshID;
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("===")) continue; // skip the first line
+                System.out.println("Line: " + line);
                 String[] splits = line.split("\\s+");
+                String shortLocation = splits[0];
                 int id = Integer.valueOf(splits[1]);
-                locationMap.put(splits[0], id);
+                System.out.println("Line: " + line);
+                locationMap.put(shortLocation, id);
+                System.out.println("Put " + shortLocation + " --> " + id);
                 if (id > largestId) {
                     largestId = id;
                 }
