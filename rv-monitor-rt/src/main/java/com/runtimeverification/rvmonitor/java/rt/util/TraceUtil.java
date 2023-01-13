@@ -1,6 +1,10 @@
 package com.runtimeverification.rvmonitor.java.rt.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +30,26 @@ public class TraceUtil {
             locationMap.put(fullLOC, shortLocation);
         }
         return shortLocation;
+    }
+
+    public static void updateLocationMapFromFile(File locationMapFile) {
+        if (!locationMapFile.exists()) return;
+        String line;
+        int largestId = freshID;
+        try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("===")) continue; // skip the first line
+                String[] splits = line.split("\\s+");
+                int id = Integer.valueOf(splits[1]);
+                locationMap.put(splits[0], id);
+                if (id > largestId) {
+                    largestId = id;
+                }
+            }
+        } catch (FileNotFoundException ex) { // ignore if we can't read
+        } catch (IOException ex) {
+        }
+        freshID = largestId;
     }
 
     public static Map<String, Integer> getLocationMap() {

@@ -1,5 +1,6 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     List<Integer> lengths = new ArrayList<>();
 
     public UniqueMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                       PrintWriter locationWriter, String dbPath, PrintWriter uniqueWriter) {
-        super(writer, doAnalysis, writeLocationMap, locationWriter, dbPath);
+                                       File locationMapFile, String dbPath, PrintWriter uniqueWriter) {
+        super(writer, doAnalysis, writeLocationMap, locationMapFile, dbPath);
         this.uniqueWriter = uniqueWriter;
     }
 
