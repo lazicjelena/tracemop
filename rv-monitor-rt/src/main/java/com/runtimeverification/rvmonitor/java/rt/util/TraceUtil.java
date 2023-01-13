@@ -45,8 +45,8 @@ public class TraceUtil {
                 if (line.startsWith("===")) continue; // skip the first line
                 System.out.println("Line: " + line);
                 String[] splits = line.split("\\s+");
-                String shortLocation = splits[0];
-                int id = Integer.valueOf(splits[1]);
+                String shortLocation = splits[1];
+                int id = Integer.valueOf(splits[0]);
                 locationMap.put(shortLocation, id);
                 System.out.println("Put " + shortLocation + " --> " + id);
                 if (id > largestId) {
