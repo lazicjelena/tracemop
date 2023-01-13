@@ -42,12 +42,11 @@ public class TraceUtil {
         System.out.println("LENGTH: " + locationMapFile.length());
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
             while ((line = reader.readLine()) != null) {
+                if (line.startsWith("===")) continue; // skip the first line
                 System.out.println("Line: " + line);
                 String[] splits = line.split("\\s+");
-                if (splits.length < 2) continue; // skip the first line
                 String shortLocation = splits[0];
                 int id = Integer.valueOf(splits[1]);
-                System.out.println("Line: " + line);
                 locationMap.put(shortLocation, id);
                 System.out.println("Put " + shortLocation + " --> " + id);
                 if (id > largestId) {
