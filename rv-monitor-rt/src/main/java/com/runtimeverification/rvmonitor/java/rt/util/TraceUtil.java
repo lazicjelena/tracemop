@@ -34,6 +34,11 @@ public class TraceUtil {
         return shortLocation;
     }
 
+    /**
+     * Updates locationMap and freshID based on a potentially existing locationMap recorded in locationMapFile.
+     * The method will silently return if locationMapFile is empty or does not exist.
+     * @param locationMapFile locationMapFile to read from
+     */
     public static void updateLocationMapFromFile(File locationMapFile) {
         if (!locationMapFile.exists()) return;
         String line;
