@@ -43,7 +43,7 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     private void analyzeUniqueTraces() {
         uniqueWriter.println("=== UNIQUE TRACE STATS ===");
         DecimalFormat format = new DecimalFormat("0.00");
-        if (traceDB.size() == 0) return; // prevent IndexOutOfBoundsException when the trace is empty
+        if (traceDB.size() == 0) return; // prevent IndexOutOfBoundsException when TraceDB is empty
         lengths = traceDB.getTraceLengths();
         Collections.sort(lengths);
         uniqueWriter.println("Min Trace Size: " + lengths.get(0));
