@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.h2.util.json.JSONValidationTargetWithoutUniqueKeys;
-
 public class TraceUtil {
 
     private static Map<String, Integer> locationMap = new HashMap<>();
