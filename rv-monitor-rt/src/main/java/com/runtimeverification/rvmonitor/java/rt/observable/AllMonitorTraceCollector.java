@@ -1,5 +1,7 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,16 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                    PrintWriter locationMapWriter, String dbPath) {
+                                    File locationMapFile, String dbPath) {
         super(writer, dbPath);
         this.doAnalysis = doAnalysis;
         this.writeLocationMap = writeLocationMap;
-        this.locationMapWriter = locationMapWriter;
+        TraceUtil.updateLocationMapFromFile(locationMapFile);
+        try {
+            this.locationMapWriter = new PrintWriter(locationMapFile);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
