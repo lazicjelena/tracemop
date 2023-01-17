@@ -36,11 +36,11 @@ public class TraceUtil {
 
     /**
      * Updates locationMap and freshID based on a potentially existing locationMap recorded in locationMapFile.
-     * The method will silently return if locationMapFile is empty or does not exist.
+     * The method will return immediately if locationMapFile is empty or does not exist.
      * @param locationMapFile locationMapFile to read from
      */
     public static void updateLocationMapFromFile(File locationMapFile) {
-        if (!locationMapFile.exists()) return;
+        if (!locationMapFile.exists() || locationMapFile.length() == 0) return;
         String line;
         int largestId = freshID;
         try (BufferedReader reader = new BufferedReader(new FileReader(locationMapFile))) {
@@ -55,12 +55,11 @@ public class TraceUtil {
                 }
             }
         } catch (FileNotFoundException ex) { // ignore if we can't read
-            System.out.println("TraceUtil.java: exception while updating locations");
+            ex.printStackTrace();
         } catch (IOException ex) {
-            System.out.println("TraceUtil.java: exception while updating locations");
+            ex.printStackTrace();
         }
         freshID = largestId + 1;
-        System.out.println("TraceUtil.java: Updated LocationMap, freshID is " + freshID);
     }
 
     public static Map<String, Integer> getLocationMap() {
