@@ -33,6 +33,16 @@ We have only tested JavaMOP on:
 
    NOTE: We are aware of one parsing-related flaky unit test in JavaMOP. When that test fails, the run of the second script will stop. One work-around is to change `mvn clean package -DskipITs` to `mvn clean package -DskipITs -DskipTests` in `scripts/integration-test.sh`. Another work-around is to comment out all occurrences of `exit 1` in `scripts/integration-test.sh`. We plan to fix these tests soon, but please feel free to contribute a pull request if you have a patch.
 
+## Configuration
+
+Several options allow to collect the traces that JavaMOP generates. The trace collection process can be further configured via the contents of the `-dbConfigFile` option. Currently, the file that is passed into the `-dbConfigFile` allows to configure two parameters:
+  
+   a. Use `db` to specify what DBMS to use. Currently, we support two values: `h2` (default), and `h2-normalized` (experimental).
+
+   b. Setting `dumpDB=true` will cause JavaMOP to write all collected traces to disk. This option is `false` by default.
+
+Beyond this configuration file, you can see all options that are allowed by running `javamop -help` or `rv-monitor -help`.
+
 ## Contributing
 
 We are accepting issues and pull requests. We welcome all who are interested to help fix issues.
