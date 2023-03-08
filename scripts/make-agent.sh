@@ -2,10 +2,11 @@
 
 SCRIPT_DIR=$( cd $( dirname $0 ) && pwd )
 
-if [ $# != 6 ]; then
-    echo "Usage: $0 property-directory output-directory verbose-mode tracking-mode trace-dir agent-name"
+if [ $# != 7 ]; then
+    echo "Usage: $0 property-directory output-directory verbose-mode tracking-mode trace-dir agent-name db-conf"
     echo "       verbose-mode: {verbose|quiet}"
     echo "       tracking-mode: {track|no-track}"
+    echo "       file containing the database configurations to use"
     exit
 fi
 
@@ -15,6 +16,7 @@ mode=$3
 track=$4
 trace_dir=$5
 agent_name=$6
+db_conf=$7
 
 function build_agent() {
     local agent_name=$1
@@ -29,7 +31,7 @@ function build_agent() {
     done
     rm -rf ${props_dir}/classes/mop; mkdir -p ${props_dir}/classes/mop
     if [ "${track}" == "track" ]; then
-        rv-monitor -merge -d ${props_dir}/classes/mop/ ${props_dir}/*.rvm -trackEventLocations -computeUniqueTraceStats -storeEventLocationMapFile -artifactsDir ${trace_dir} #-v
+        rv-monitor -merge -d ${props_dir}/classes/mop/ ${props_dir}/*.rvm -trackEventLocations -computeUniqueTraceStats -storeEventLocationMapFile -artifactsDir ${trace_dir} -dbConfigFile ${db_conf} #-v
     else
         rv-monitor -merge -d ${props_dir}/classes/mop/ ${props_dir}/*.rvm #-v
     fi
