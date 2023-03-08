@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TraceDBH2Normalized extends TraceDB {
+public class TraceDBH2Normalized extends AbstractH2TraceDB {
 
     // cache of traces and their IDs that we know of, to save trips to the DB
     private Map<Clob, Long> traceIDMap = new HashMap<>();

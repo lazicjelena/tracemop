@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class TraceDBH2 extends TraceDB{
+public class TraceDBH2 extends AbstractH2TraceDB {
 
     public TraceDBH2() {
         super();
@@ -85,7 +85,7 @@ public class TraceDBH2 extends TraceDB{
     }
 
     public static void main(String[] args) {
-        TraceDB traceDB = new TraceDBH2();
+        AbstractH2TraceDB traceDB = new TraceDBH2();
         traceDB.createTable();
         System.out.println("Start: " + new Date().toString());
         traceDB.put("fy#"+1, "[a,b,b,c]", 4);
