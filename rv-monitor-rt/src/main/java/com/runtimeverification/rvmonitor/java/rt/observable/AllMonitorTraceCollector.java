@@ -21,8 +21,8 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                    File locationMapFile, String dbPath) {
-        super(writer, dbPath);
+                                    File locationMapFile, String dbPath, String dbConfigFile) {
+        super(writer, dbPath, dbConfigFile);
         this.doAnalysis = doAnalysis;
         this.writeLocationMap = writeLocationMap;
         TraceUtil.updateLocationMapFromFile(locationMapFile);

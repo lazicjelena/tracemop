@@ -5,20 +5,20 @@ import java.util.Map;
 
 public interface TraceDB {
 
-    public void put(String monitorID, String trace, int length);
+    void put(String monitorID, String trace, int length);
 
-    public void update(String monitorID, String trace, int length);
+    void update(String monitorID, String trace, int length);
 
-    public void createTable();
+    void createTable();
 
-    public abstract int uniqueTraces();
+    int uniqueTraces();
 
-    public abstract int size();
+    int size();
 
-    public abstract List<Integer> getTraceLengths();
+    List<Integer> getTraceLengths();
 
-    public abstract Map<String, Integer> getTraceFrequencies();
+    Map<String, Integer> getTraceFrequencies();
 
-    public abstract void dump();
+    void dump();
 
 }

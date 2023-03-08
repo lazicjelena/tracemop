@@ -16,6 +16,8 @@ public class TraceUtil {
 
     public static File artifactsDir = null;
 
+    public static File dbConf = null;
+
     /**
      * This method reduces the size of stored traces.
      *
