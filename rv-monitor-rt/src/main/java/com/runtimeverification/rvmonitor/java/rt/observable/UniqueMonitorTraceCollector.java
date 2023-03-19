@@ -16,8 +16,9 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     List<Integer> lengths = new ArrayList<>();
 
     public UniqueMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                       File locationMapFile, String dbPath, PrintWriter uniqueWriter) {
-        super(writer, doAnalysis, writeLocationMap, locationMapFile, dbPath);
+                                       File locationMapFile, String dbPath, String dbConfigFile,
+                                       PrintWriter uniqueWriter) {
+        super(writer, doAnalysis, writeLocationMap, locationMapFile, dbPath, dbConfigFile);
         this.uniqueWriter = uniqueWriter;
     }
 
@@ -27,9 +28,9 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
         if (isDoAnalysis()) {
             analyzeUniqueTraces();
         }
-//        if (isDumpingTraces()) {
+        if (isDumpingTraces()) {
             traceDB.dump();
-//        }
+        }
     }
 
     private String getFrequencyMap(Map<String, Integer> traceFrequencyMap) {

@@ -109,6 +109,11 @@ public class RVMOptions {
             converter = JavaMOPOptions.FileConverter.class)
     public File artifactsDir = new File(System.getProperty("java.io.tmpdir"));
 
+    @Parameter(names="-dbConfigFile",
+            description = "File containing database configurations to use for capturing traces",
+            converter = JavaMOPOptions.FileConverter.class)
+    public File dbConfigFile = new File(System.getProperty("user.home"), ".trace-db.config");
+
     public boolean isJarFile;
 
     public String jarFilePath;

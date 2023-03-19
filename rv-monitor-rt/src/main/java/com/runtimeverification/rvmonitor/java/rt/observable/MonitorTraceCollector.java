@@ -29,24 +29,28 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
     protected final Set<String> monitors;
 
-    private boolean userConfigLoaded;
+    private boolean dbConfigLoaded;
 
     protected Properties configs;
 
     private boolean isDumpingTraces;
 
-    public MonitorTraceCollector(PrintWriter writer, String dbPath) {
+    protected String dbConfPath;
+
+    public MonitorTraceCollector(PrintWriter writer, String dbPath, String dbConfPath) {
         this.writer = writer;
-        this.traceDB = getTraceDB(dbPath);
         this.monitors = new HashSet<>();
+        this.dbConfPath = dbConfPath;
+        loadDBConfig();
+        this.traceDB = getTraceDB(dbPath);
         setDumpingTraces(getDumpConfig());
         traceDB.createTable();
     }
 
     private boolean getDumpConfig() {
         boolean isDumping = false;
-        if (isUserConfigLoaded()) {
-            Properties userConfigs = getUserConfigs();
+        if (isDbConfigLoaded()) {
+            Properties userConfigs = loadDBConfig();
             if (userConfigs.containsKey("dumpDB")) {
                 String dump = userConfigs.getProperty("dumpDB");
                 switch (dump) {
@@ -62,18 +66,16 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
         return isDumping;
     }
 
-    private Properties getUserConfigs() {
-        System.err.println("LOADINGGGGG");
-        if (configs != null) {
+    private Properties loadDBConfig() {
+        if (isDbConfigLoaded()) {
             return configs;
         }
         configs = new Properties();
-        // does the user have a config file in their home directory
-        File traceDBConfigFile = new File(System.getProperty("user.home"), ".trace-db.config");
+        File traceDBConfigFile = new File(dbConfPath);
         if (traceDBConfigFile.exists()) {
             try(FileInputStream inputStream = new FileInputStream(traceDBConfigFile)) {
                 configs.load(inputStream);
-                setUserConfigLoaded(true);
+                setDbConfigLoaded(true);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -85,8 +87,8 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
     private TraceDB getTraceDB(String dbPath) {
         TraceDB traceDB = null;
-        if (isUserConfigLoaded()) {
-            Properties userConfigs = getUserConfigs();
+        if (isDbConfigLoaded()) {
+            Properties userConfigs = loadDBConfig();
             if (userConfigs.containsKey("db")) {
                 String dbType = userConfigs.getProperty("db");
                 switch (dbType) {
@@ -97,7 +99,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
                         traceDB = new TraceDBH2Normalized(dbPath);
                         break;
                     default:
-                        traceDB = new TraceDBH2Normalized(dbPath);
+                        traceDB = new TraceDBH2(dbPath);
                 }
             }
         }
@@ -110,12 +112,12 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
         return traceDB;
     }
 
-    public boolean isUserConfigLoaded() {
-        return userConfigLoaded;
+    public boolean isDbConfigLoaded() {
+        return dbConfigLoaded;
     }
 
-    public void setUserConfigLoaded(boolean userConfigLoaded) {
-        this.userConfigLoaded = userConfigLoaded;
+    public void setDbConfigLoaded(boolean dbConfigLoaded) {
+        this.dbConfigLoaded = dbConfigLoaded;
     }
 
     public boolean isDumpingTraces() {

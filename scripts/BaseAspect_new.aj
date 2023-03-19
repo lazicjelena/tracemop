@@ -10,6 +10,7 @@ public aspect BaseAspect {
   !within(org.dacapo.harness..*) &&
   !within(net.sf.cglib..*) &&
   !within(mop..*) &&
+  !within(org.h2..*) &&
   !within(javamoprt..*) &&
   !within(rvmonitorrt..*) &&
   !within(org.junit..*) &&

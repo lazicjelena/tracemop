@@ -320,6 +320,8 @@ public class Main {
 
         TraceUtil.artifactsDir = dotTraces;
 
+        TraceUtil.dbConf = options.dbConfigFile;
+
         ClassLoader loader = Main.class.getClassLoader();
         String mainClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();
         if (mainClassPath.endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
