@@ -140,6 +140,6 @@ public abstract class AbstractH2TraceDB implements TraceDB{
      */
     private void updateSystemProperty() {
         System.setProperty("dbFilePath", this.dbDir);
-        System.err.println("Set dbFilePath to: " + System.getProperty("dbFilePath"));
+        System.err.println("[AbstractH2TraceDB] Set dbFilePath to: " + System.getProperty("dbFilePath"));
     }
 }
