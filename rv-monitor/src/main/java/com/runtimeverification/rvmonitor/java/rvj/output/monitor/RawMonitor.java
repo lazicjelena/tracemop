@@ -124,10 +124,18 @@ public class RawMonitor extends Monitor {
             ret += params.parameterDeclString();
         }
         ret += ") {\n";
-
         if (has__SKIP)
             ret += "boolean " + BaseMonitor.skipEvent + " = false;\n";
 
+        if (Main.options.internalBehaviorObserving) {
+            ret += "this.trace.add(\"";
+            if (Main.options.trackEventLocations) {
+                ret += event.getId() + "\" + \"~\" + TraceUtil.getShortLocation(com.runtimeverification.rvmonitor.java.rt.ViolationRecorder.getLineOfCode())";
+            } else {
+                ret += event.getId() + "\"";
+            }
+            ret += ");\n";
+        }
         if (!condition.isEmpty()) {
             ret += "if (!(" + condition + ")) {\n";
             if (Main.options.generateVoidMethods)
@@ -192,7 +200,11 @@ public class RawMonitor extends Monitor {
         ret += "class " + monitorName;
         if (isOutermost)
             ret += " extends com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractSynchronizedMonitor";
-        ret += " implements Cloneable, com.runtimeverification.rvmonitor.java.rt.RVMObject {\n";
+        ret += " implements Cloneable, com.runtimeverification.rvmonitor.java.rt.RVMObject";
+        if (Main.options.internalBehaviorObserving)
+            ret += ", IObservableObject";
+
+        ret +=  " {\n";
 
         if (varInOutermostMonitor != null)
             ret += varInOutermostMonitor;
@@ -206,12 +218,48 @@ public class RawMonitor extends Monitor {
         ret += monitorName + " ret = (" + monitorName + ") super.clone();\n";
         if (monitorInfo != null)
             ret += monitorInfo.copy("ret", "this");
+        if (Main.options.internalBehaviorObserving) {
+            ret += "ret.monitorid = ++nextid;\n";
+            ret += "ret.trace = new ArrayList<String>();\n";
+            ret += "ret.trace.addAll(this.trace);\n";
+        }
         ret += "return ret;\n";
         ret += "}\n";
         ret += "catch (CloneNotSupportedException e) {\n";
         ret += "throw new InternalError(e.toString());\n";
         ret += "}\n";
         ret += "}\n";
+
+        if (Main.options.internalBehaviorObserving) {
+//            ret += "private List<String> trace;\n";
+//            ret += "public List<String> getTrace(){ return this.trace; };\n";
+//            ret += "private int monitorid;\n";
+//            ret += "public int getMonitorID(){ return this.monitorid; };\n";
+            ret += "private static int nextid;\n";
+            ret += "\n";
+            ret += "@Override\n";
+            ret += "public final String getObservableObjectDescription() {\n";
+            ret += "StringBuilder s = new StringBuilder();\n";
+            ret += "s.append('#');\n";
+            ret += "s.append(this.monitorid);\n";
+//            if (feature.isTimeTrackingNeeded()) {
+//                ret += "s.append(\"{t:\");\n";
+//                ret += "s.append(this.tau);\n";
+//                ret += "s.append(\",dis:\");\n";
+//                ret += "s.append(this.disable);\n";
+//                ret += "s.append('}');\n";
+//            }
+            ret += "s.append('[');\n";
+            ret += "for (int i = 0; i < this.trace.size(); ++i) {\n";
+            ret += "if (i > 0)\n";
+            ret += "s.append(',');\n";
+            ret += "s.append(this.trace.get(i));\n";
+            ret += "}\n";
+            ret += "s.append(']');\n";
+            ret += "return s.toString();\n";
+            ret += "}\n";
+        }
+
 
         ret += monitorDeclaration + "\n";
         if (this.has__ACTIVITY)
@@ -225,6 +273,10 @@ public class RawMonitor extends Monitor {
         ret += monitorName + "(){\n";
         if (Main.options.statistics) {
             ret += stat.incNumMonitor();
+        }
+        if (Main.options.internalBehaviorObserving) {
+            ret += "this.trace = new ArrayList<String>();\n";
+            ret += "this.monitorid = ++nextid;\n";
         }
         ret += "}\n";
 
