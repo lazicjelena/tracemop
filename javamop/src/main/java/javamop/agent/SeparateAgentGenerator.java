@@ -1,6 +1,17 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.agent;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+
 import javamop.JavaMOPAgentMain;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -9,12 +20,6 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.SystemUtils;
-
-import java.io.*;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
@@ -46,10 +51,12 @@ public final class SeparateAgentGenerator {
     public static void generateJar(final File outputDir, final String aspectname, File agentAspect,
                                    File classDir, boolean verbose, boolean isEmop) throws IOException {
         if (!isOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl", "aspectjrt.jar") ||
-            !isOnClasspath("org.aspectj.tools.ajc.Main", "aspectjtools.jar") ||
-            !isOnClasspath("org.aspectj.weaver.Advice", "aspectjweaver.jar") ||
-            !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar") ||
-            !isOnClasspath("org.h2.tools.Csv", "h2.jar")) {
+                !isOnClasspath("org.aspectj.tools.ajc.Main", "aspectjtools.jar") ||
+                !isOnClasspath("org.aspectj.weaver.Advice", "aspectjweaver.jar") ||
+                !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar") ||
+                !isOnClasspath("org.h2.tools.Csv", "h2.jar") ||
+                !isOnClasspath("org.sqlite.JDBC", "sqlite-jdbc-3.41.0.0.jar")
+        ) {
             return;
         }
 
@@ -79,7 +86,7 @@ public final class SeparateAgentGenerator {
                     "-outxml", agentAspect.getAbsolutePath());
         }
 
-        if(ajcReturn != 0) {
+        if (ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
             System.exit(ajcReturn);
         }
@@ -92,7 +99,7 @@ public final class SeparateAgentGenerator {
         }
 
         final File aopAjc = new File(agentDir.getAbsolutePath() + File.separator
-                                     + "META-INF" + File.separator + "aop-ajc.xml");
+                + "META-INF" + File.separator + "aop-ajc.xml");
         if (!aopAjc.exists()) {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
@@ -112,20 +119,24 @@ public final class SeparateAgentGenerator {
             String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
             String collectionsJarPath = getJarLocation(baseClasspath, "commons-collections4");
             String h2JarPath = getJarLocation(baseClasspath, "h2");
+            String sqliteJarPath = getJarLocation(baseClasspath, "sqlite-jdbc-3.41.0.0");
 
             //get the actual jar name from the absolute path
             String weaverJarName = null;
             String rvmRTJarName = null;
             String collectionsJarName = null;
             String h2JarName = null;
+            String sqliteJarName = null;
             if (rvMonitorRTJarPath != null && weaverJarPath != null && collectionsJarPath != null) {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
                 collectionsJarName = getJarName(collectionsJarPath);
                 h2JarName = getJarName(h2JarPath);
+                sqliteJarName = getJarName(sqliteJarPath);
             } else {
-                throw new IOException("(missing jars) Could not find aspectjweaver or rvmonitorrt or commons-collections"
-                                      + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
+                throw new IOException(
+                        "(missing jars) Could not find aspectjweaver or rvmonitorrt or commons-collections"
+                                + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
 
             //make references so that these files can be referred to later
@@ -133,12 +144,14 @@ public final class SeparateAgentGenerator {
             File actualRTFile = new File(agentDir, rvmRTJarName);
             File actualCollectionsFile = new File(agentDir, collectionsJarName);
             File actualH2File = new File(agentDir, h2JarName);
+            File actualSQLiteFile = new File(agentDir, sqliteJarName);
 
             // copy in the needed jar files
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
             copyFile(new File(collectionsJarPath), actualCollectionsFile);
             copyFile(new File(h2JarPath), actualH2File);
+            copyFile(new File(sqliteJarPath), actualSQLiteFile);
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
@@ -146,12 +159,14 @@ public final class SeparateAgentGenerator {
             if (extractJar(verbose, agentDir, rvmRTJarName)) return;
             if (extractJar(verbose, agentDir, collectionsJarName)) return;
             if (extractJar(verbose, agentDir, h2JarName)) return;
+            if (extractJar(verbose, agentDir, sqliteJarName)) return;
 
             //remove extracted jars to make agent lighter weight
             deleteFile(actualWeaverFile);
             deleteFile(actualRTFile);
             deleteFile(actualCollectionsFile);
             deleteFile(actualH2File);
+            deleteFile(actualSQLiteFile);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
@@ -161,7 +176,7 @@ public final class SeparateAgentGenerator {
 
         // # Step 5: Step make the java agent jar
         final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(), aspectname
-                                                                                                          + ".jar", "-C", agentDir.toString(), ".");
+                + ".jar", "-C", agentDir.toString(), ".");
         if (jarReturn != 0) {
             System.err.println("(jar) Failed to produce final jar");
             return;
@@ -191,7 +206,7 @@ public final class SeparateAgentGenerator {
     private static void deleteFile(File file) {
         if (!file.delete()) {
             System.err.println("(delete) Failed to delete jar; generated jar will "
-                               + "have a bigger size than normal: " + file.getAbsolutePath());
+                    + "have a bigger size than normal: " + file.getAbsolutePath());
         }
     }
 

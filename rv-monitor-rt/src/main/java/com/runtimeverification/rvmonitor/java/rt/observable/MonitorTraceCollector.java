@@ -20,6 +20,7 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 import com.runtimeverification.rvmonitor.java.rt.util.TraceDB;
 import com.runtimeverification.rvmonitor.java.rt.util.TraceDBH2;
 import com.runtimeverification.rvmonitor.java.rt.util.TraceDBH2Normalized;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceDBSQLite;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
@@ -97,6 +98,9 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
                         break;
                     case "h2-normalized":
                         traceDB = new TraceDBH2Normalized(dbPath);
+                        break;
+                    case "sqlite":
+                        traceDB = new TraceDBSQLite(dbPath);
                         break;
                     default:
                         traceDB = new TraceDBH2(dbPath);
