@@ -19,6 +19,8 @@
 *.rvm
 scripts/props/BaseAspect.aj
 scripts/props/classes/*
+scripts/props/*.aj
+scripts/props/*.rvm
 
 \#*\#
 .\#*

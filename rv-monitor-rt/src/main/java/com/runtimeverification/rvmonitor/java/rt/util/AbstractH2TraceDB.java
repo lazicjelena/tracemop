@@ -78,9 +78,12 @@ public abstract class AbstractH2TraceDB implements TraceDB{
             return connection;
         }
         try {
+            Class.forName("org.h2.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
         } catch (SQLException e) {
             printSQLException(e);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
         return connection;
     }
