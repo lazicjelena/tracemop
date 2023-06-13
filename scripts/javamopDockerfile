@@ -34,9 +34,9 @@ WORKDIR /home/mopuser/
 # Use OpenJDK 8 when building the docker image
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 
-# Install Maven 3.5.4 locally for user
+# Install Maven 3.6.3 locally for user
 RUN \
-  wget http://mirrors.ibiblio.org/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz && \
+  wget https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz && \
   tar -xzf apache-maven-3.6.3-bin.tar.gz && mv apache-maven-3.6.3/ apache-maven/ && \
   rm apache-maven-3.6.3-bin.tar.gz && \
 # Install AspectJ
