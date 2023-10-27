@@ -319,8 +319,9 @@ public final class JavaMOPMain {
         areValidNames(specFiles);
 
         if (options.merge || options.emop) {
-            System.out.println("-Processing " + specFiles.size()
-                    + " specification(s)");
+            if (options.verbose) {
+                System.out.println("-Processing " + specFiles.size() + " specification(s)");
+            }
             processMultipleFiles(specFiles);
             String javaFile = options.outputDir.getAbsolutePath() + File.separator
                     + options.aspectname + "RuntimeMonitor.java";
@@ -337,7 +338,9 @@ public final class JavaMOPMain {
                 boolean needResetAspectName = options.aspectname == null;
                 String location = options.outputDir == null ? file.getAbsolutePath() :
                         options.outputDir.getAbsolutePath() + File.separator + file.getName();
-                System.out.println("-Processing " + file.getPath());
+                if (options.verbose) {
+                    System.out.println("-Processing " + file.getPath());
+                }
                 if (Tool.isSpecFile(file.getName())) {
                     processSpecFile(file, location);
                 }
