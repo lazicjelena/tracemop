@@ -218,7 +218,9 @@ public final class JavaMOPMain {
                 }
             }
         }
-        System.out.println(" " + aspectName + AJ_FILE_SUFFIX + " is generated");
+        if (options.verbose) {
+            System.out.println(" " + aspectName + AJ_FILE_SUFFIX + " is generated");
+        }
     }
 
     /**
@@ -256,7 +258,9 @@ public final class JavaMOPMain {
         if (suffix.equals(RVM_FILE_SUFFIX)) {
             listRVMFiles.add(filePath);
         }
-        System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
+        if (options.verbose) {
+            System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
+        }
     }
 
     /**
