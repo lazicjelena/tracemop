@@ -119,9 +119,16 @@ public class LogicRepositoryConnector {
             String executePath = new File(logicJarFilePath).getParent();
 
             String[] cmdarray = {"java", "-cp", Tool.polishPath(logicJarFilePath) + File.pathSeparator
-                                                + logicPluginFarFilePath + File.pathSeparator
-                                                + new File(Main.options.jarFilePath).getParent() + "/scala-library.jar",
-                    "com.runtimeverification.rvmonitor.logicrepository.Main" };
+                    + logicPluginFarFilePath + File.pathSeparator
+                    + new File(Main.options.jarFilePath).getParent() + "/scala-library.jar",
+                    "com.runtimeverification.rvmonitor.logicrepository.Main"};
+
+            if (Main.options.verbose) {
+                System.out.println("== pre-debugging logic repo ==");
+                System.out.println("CMD: " + Arrays.asList(cmdarray));
+                System.out.println("Path: " + executePath);
+                System.out.println("stream: " + logicInput_InputStream.toString());
+            }
 
             logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
         } else {
@@ -143,6 +150,16 @@ public class LogicRepositoryConnector {
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
 
             logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
+        }
+
+        if (Main.options.verbose) {
+            System.out.println("== debugging logic repo ==");
+            System.out.println("logicJarFilePath: " + logicJarFilePath);
+            System.out.println("logicPackageFilePath: " + logicPackageFilePath);
+            System.out.println("logicPluginFarFilePath: " + logicPluginFarFilePath);
+            System.out.println("logicClassPath: " + logicClassPath);
+            System.out.println("isLogicRepositoryInJar: " + isLogicRepositoryInJar);
+            System.out.println();
         }
 
         if (verbose) {

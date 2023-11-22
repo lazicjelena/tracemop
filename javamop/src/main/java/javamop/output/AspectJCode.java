@@ -14,7 +14,7 @@ import java.nio.file.Files;
 /**
  * The top-level generated AspectJ code.
  */
-class AspectJCode {
+public class AspectJCode {
     private final String name;
 
     private final Package packageDecl;

@@ -10,6 +10,7 @@ package javamop;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import javamop.output.AspectJCode;
 import javamop.output.MOPProcessor;
 import javamop.parser.SpecExtractor;
 import javamop.parser.ast.MOPSpecFile;
@@ -110,23 +111,54 @@ public final class JavaMOPMain {
      * @param location an absolute path for result file
      */
     public static void processSpecFile(File file, String location) throws MOPException, IOException {
+        Processor processor = getProcessor(file, location);
+        writeFile(processor.mopProcessor.generateAJFile(processor.spec), location, AJ_FILE_SUFFIX, options.aspectname);
+    }
+
+    private static Processor getProcessor(File file, String location) throws MOPException {
         MOPNameSpace.init();
         MOPSpecFile spec = SpecExtractor.parse(file);
 
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
+        // We shouldn't use the name bound to the -n option for renaming the .mop
+        MOPProcessor mopProcessor = new MOPProcessor(options.aspectname);
 
-        MOPProcessor processor = new MOPProcessor(options.aspectname);
-
-        // We shouldn't use the name bound to the -n option for renaming the the .mop 
         // file to .rvm before passing to rv-monitor.
         // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
-        // NOTE: If we separate rv-monitor from JavaMOP completely, we neeed to revisit this.
-        writeFile(processor.generateRVFile(spec), location, RVM_FILE_SUFFIX, null);
-
-        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX, options.aspectname);
+        // NOTE: If we separate rv-monitor from JavaMOP completely, we need to revisit this.
+        writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, null);
+        Processor processor = new Processor(spec, mopProcessor);
+        return processor;
     }
+
+    private static class Processor {
+        public final MOPSpecFile spec;
+        public final MOPProcessor mopProcessor;
+
+        public Processor(MOPSpecFile spec, MOPProcessor processor) {
+            this.spec = spec;
+            this.mopProcessor = processor;
+        }
+    }
+
+    /**
+     * Process a specification file to generate an object representation of the aspectj file.
+     * The main client right now is TinyMOP.
+     * The path argument should be an existing specification file name. The location argument
+     * should contain the original file name, But it may have a different directory.
+     *
+     * @param file     an absolute path of a specification file
+     * @param location an absolute path for result file
+     */
+    public static AspectJCode processSpecFileWithReturn(File file, String location) throws MOPException, IOException {
+        Processor processor = getProcessor(file, location);
+        AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec);
+        writeFile(Tool.changeIndentation(ajCode.toString(), "", "\t"), location, AJ_FILE_SUFFIX, options.aspectname);
+        return ajCode;
+    }
+
 
     /**
      * Process multiple specification files, either each to a corresponding RVM/AJ file or merging
@@ -147,14 +179,14 @@ public final class JavaMOPMain {
         } else {
             if (specFiles.size() == 1) {
                 aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
-                if(options.emop) {
+                if (options.emop) {
                     int suffixNumber = 0;
                     // generate auto name like 'MultiMonitorAspect.aj'
                     File aspectFile;
                     do {
                         suffixNumber++;
                         aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
-                            "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
+                                "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
                     } while (aspectFile.exists());
                     String mergeName = "MultiSpec_" + suffixNumber;
                     options.aspectname = mergeName;

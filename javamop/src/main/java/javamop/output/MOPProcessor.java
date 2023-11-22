@@ -96,32 +96,47 @@ public class MOPProcessor {
         rvresult = Tool.changeIndentation(rvresult, "", "\t");
         return rvresult;
     }
-    
+
     /**
      * Convert a MOPSpecFile into aspectJ file.
+     *
      * @param mopSpecFile The parameter to convert.
      * @return The generated aspectJ file.
+     * @return A string representation of the generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
     public String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException, IOException {
         String result = "";
-        
-        // register all user variables to MOPNameSpace to avoid conflicts
-        for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs())
-            registerUserVar(mopSpec);
-        
-        // Error Checker
-        for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            MOPErrorChecker.verify(mopSpec);
-        }
-        
+        registerAndValidate(mopSpecFile);
         // Generate output code
-
         result = (new AspectJCode(name, mopSpecFile)).toString();
-
         // Do indentation
         result = Tool.changeIndentation(result, "", "\t");
-        
         return result;
+    }
+
+    private void registerAndValidate(MOPSpecFile mopSpecFile) throws MOPException {
+        // register all user variables to MOPNameSpace to avoid conflicts
+        for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs())
+            registerUserVar(mopSpec);
+        // Error Checker
+        for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
+            MOPErrorChecker.verify(mopSpec);
+        }
+    }
+
+    /**
+     * Convert a MOPSpecFile into aspectJ file, but return the AspectJCode object for clients that need it. The current
+     * main use case is TinyMOP
+     *
+     * @param mopSpecFile The parameter to convert.
+     * @return An object representation of the generated aspectJ file.
+     * @throws MOPException If there is a logic error in conversion.
+     */
+    public AspectJCode generateAJFileWithReturn(MOPSpecFile mopSpecFile) throws MOPException, IOException {
+        registerAndValidate(mopSpecFile);
+        // Generate output code
+        AspectJCode aspectJCode = new AspectJCode(name, mopSpecFile);
+        return aspectJCode;
     }
 }
