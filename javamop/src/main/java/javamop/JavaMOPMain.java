@@ -128,7 +128,7 @@ public final class JavaMOPMain {
         // file to .rvm before passing to rv-monitor.
         // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
         // NOTE: If we separate rv-monitor from JavaMOP completely, we need to revisit this.
-        writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, null);
+        writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, options.aspectname);
         Processor processor = new Processor(spec, mopProcessor);
         return processor;
     }
