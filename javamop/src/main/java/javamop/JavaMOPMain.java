@@ -431,6 +431,18 @@ public final class JavaMOPMain {
      * @param args Configuration options and input files for JavaMOP.
      */
     public static void main(String[] args) {
+        if (prepare(args)) return;
+        // Generate .rvm files and .aj files
+        try {
+            process(options.files);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            if (options.debug)
+                e.printStackTrace();
+        }
+    }
+
+    public static boolean prepare(String[] args) {
         init();
 
         options = new JavaMOPOptions();
@@ -439,7 +451,7 @@ public final class JavaMOPMain {
             jc = new JCommander(options, args);
         } catch (ParameterException pe) {
             System.out.println(pe.getMessage());
-            return;
+            return true;
         }
         jc.setProgramName("javamop");
 
@@ -455,14 +467,7 @@ public final class JavaMOPMain {
                     "!/javamop/JavaMOPMain.class".length());
             jarFilePath = Tool.polishPath(jarFilePath);
         }
-        // Generate .rvm files and .aj files
-        try {
-            process(options.files);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            if (options.debug)
-                e.printStackTrace();
-        }
+        return false;
     }
 
     /**
