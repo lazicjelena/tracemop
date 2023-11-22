@@ -125,4 +125,32 @@ public class AspectJCode {
 
         return ret;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Package getPackageDecl() {
+        return packageDecl;
+    }
+
+    public Imports getImports() {
+        return imports;
+    }
+
+    public String getBaseAspect() {
+        return baseAspect;
+    }
+
+    public CombinedAspect getAspect() {
+        return aspect;
+    }
+
+    public boolean isVersionedStack() {
+        return versionedStack;
+    }
+
+    public SystemAspect getSystemAspect() {
+        return systemAspect;
+    }
 }

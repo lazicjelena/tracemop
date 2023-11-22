@@ -96,4 +96,32 @@ public class CombinedAspect {
         ret += "}\n";
         return ret;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public MOPVariable getMapManager() {
+        return mapManager;
+    }
+
+    public boolean isVersionedStack() {
+        return versionedStack;
+    }
+
+    public List<JavaMOPSpec> getSpecs() {
+        return specs;
+    }
+
+    public MOPStatManager getStatManager() {
+        return statManager;
+    }
+
+    public LockManager getLockManager() {
+        return lockManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
 }
