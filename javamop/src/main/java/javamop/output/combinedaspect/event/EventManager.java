@@ -28,6 +28,26 @@ public class EventManager {
 
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
+    public MOPVariable getCommonPointcut() {
+        return commonPointcut;
+    }
+
+    public ArrayList<EndObject> getEndObjectEvents() {
+        return endObjectEvents;
+    }
+
+    public ArrayList<EndThread> getEndThreadEvents() {
+        return endThreadEvents;
+    }
+
+    public ArrayList<StartThread> getStartThreadEvents() {
+        return startThreadEvents;
+    }
+
+    public EndProgram getEndProgramEvent() {
+        return endProgramEvent;
+    }
+
     /**
      * Construct an event manager over multiple specifications.
      *
@@ -200,7 +220,7 @@ public class EventManager {
     /**
      * Move "before" advice to the front.
      */
-    private ArrayList<AdviceAndPointCut> adjustAdviceOrder() {
+    public ArrayList<AdviceAndPointCut> adjustAdviceOrder() {
         ArrayList<AdviceAndPointCut> result = new ArrayList<AdviceAndPointCut>();
         for (AdviceAndPointCut advice : this.advices) {
             if (advice.pos.equals("before")) {
