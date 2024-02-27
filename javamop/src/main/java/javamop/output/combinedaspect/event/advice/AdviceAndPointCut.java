@@ -327,7 +327,6 @@ public class AdviceAndPointCut {
             // Parameters
             // Original (including threadVar)
             String original = event.getParameters().parameterString();
-            System.out.println("FOOOO: " + original);
             ret += original;
 
             // Parameters in returning pointcut
@@ -444,5 +443,9 @@ public class AdviceAndPointCut {
 
     public AroundAdviceReturn getAroundAdviceReturn() {
         return aroundAdviceReturn;
+    }
+
+    public void setPointCutPrinted(boolean pointCutPrinted) {
+        this.pointCutPrinted = pointCutPrinted;
     }
 }
