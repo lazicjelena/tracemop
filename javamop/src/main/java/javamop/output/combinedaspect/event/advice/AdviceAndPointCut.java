@@ -47,12 +47,12 @@ public class AdviceAndPointCut {
     private final GlobalLock globalLock;
     private final boolean isSync;
 
-    private final LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
-    private final HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
-    private final HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
+    private final LinkedList<EventDefinition> events = new LinkedList<>();
+    private final HashSet<JavaMOPSpec> specsForActivation = new HashSet<>();
+    private final HashSet<JavaMOPSpec> specsForChecking = new HashSet<>();
 
     private final HashMap<EventDefinition, AdviceBody> advices =
-            new HashMap<EventDefinition, AdviceBody>();
+            new HashMap<>();
 
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
@@ -243,7 +243,7 @@ public class AdviceAndPointCut {
      * @return Java/AspectJ source code.
      */
     @Override
-    public String toString() {
+    public String   toString() {
         String ret = "";
         String pointcutStr = pointcut.toRVString();
 
@@ -412,4 +412,10 @@ public class AdviceAndPointCut {
     public String getParametersDeclStr() {
         return parameters.parameterDeclString();
     }
+
+    public HashMap<EventDefinition, AdviceBody> getAdvices() {
+        return advices;
+    }
+
+
 }
