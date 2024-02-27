@@ -19,10 +19,10 @@ import java.util.List;
  */
 public class EventManager {
 
-    private ArrayList<AdviceAndPointCut> advices = new ArrayList<AdviceAndPointCut>();
-    private final ArrayList<EndObject> endObjectEvents = new ArrayList<EndObject>();
-    private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
-    private final ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
+    private ArrayList<AdviceAndPointCut> advices = new ArrayList<>();
+    private final ArrayList<EndObject> endObjectEvents = new ArrayList<>();
+    private final ArrayList<EndThread> endThreadEvents = new ArrayList<>();
+    private final ArrayList<StartThread> startThreadEvents = new ArrayList<>();
     private final EndProgram endProgramEvent;
 
 
@@ -262,5 +262,9 @@ public class EventManager {
                                         String aspectName) {
             return methodName(enclosing.getName(), evt.getId(), aspectName);
         }
+    }
+
+    public ArrayList<AdviceAndPointCut> getAdvices() {
+        return advices;
     }
 }
