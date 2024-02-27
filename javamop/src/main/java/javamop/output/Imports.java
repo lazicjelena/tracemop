@@ -9,7 +9,7 @@ import javamop.parser.ast.MOPSpecFile;
 /**
  * A list of import declarations.
  */
-class Imports {
+public class Imports {
     private final ArrayList<String> imports;
     private final String[] required = {"java.util.concurrent.*", "java.util.concurrent.locks.*", 
         "java.util.*", "javamoprt.*", "java.lang.ref.*", "org.aspectj.lang.*" };
