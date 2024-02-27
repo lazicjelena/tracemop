@@ -322,13 +322,12 @@ public class AdviceAndPointCut {
 
             ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event,
                     this.fileName);
-            System.out.println("FOOOO: " + EventManager.EventMethodHelper.methodName(advice.mopSpec, event,
-                    this.fileName));
             ret += "(";
 
             // Parameters
             // Original (including threadVar)
             String original = event.getParameters().parameterString();
+            System.out.println("FOOOO: " + original);
             ret += original;
 
             // Parameters in returning pointcut
