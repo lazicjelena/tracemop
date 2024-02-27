@@ -437,4 +437,12 @@ public class AdviceAndPointCut {
     public LinkedList<EventDefinition> getEvents() {
         return events;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public AroundAdviceReturn getAroundAdviceReturn() {
+        return aroundAdviceReturn;
+    }
 }
