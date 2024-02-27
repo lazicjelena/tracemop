@@ -16,10 +16,10 @@ import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class EventManager {
 
-    public ArrayList<Advice> advices = new ArrayList<Advice>();
-    public ArrayList<EndObject> endObjectEvents = new ArrayList<EndObject>();
-    public ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
-    public ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
+    public ArrayList<Advice> advices = new ArrayList<>();
+    public ArrayList<EndObject> endObjectEvents = new ArrayList<>();
+    public ArrayList<EndThread> endThreadEvents = new ArrayList<>();
+    public ArrayList<StartThread> startThreadEvents = new ArrayList<>();
     public EndProgram endProgramEvent;
 
     public TreeMap<RVMonitorSpec, MonitorSet> monitorSets;
