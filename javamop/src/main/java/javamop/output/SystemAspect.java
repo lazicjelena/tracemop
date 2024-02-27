@@ -5,7 +5,7 @@ package javamop.output;
  * An aspect that is included with the generated code to keep track of the depth of the call stack.
  * It has thread-local storage to keep independent storage for each thread's callstack.
  */
-class SystemAspect {
+public class SystemAspect {
     private final String name;
 
     /**
