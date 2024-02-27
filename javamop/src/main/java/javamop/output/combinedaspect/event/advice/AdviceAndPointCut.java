@@ -446,6 +446,6 @@ public class AdviceAndPointCut {
     }
 
     public void setPointCutPrinted(boolean pointCutPrinted) {
-        this.pointCutPrinted = pointCutPrinted;
+        this.isPointCutPrinted[0] = pointCutPrinted;
     }
 }
