@@ -322,6 +322,8 @@ public class AdviceAndPointCut {
 
             ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event,
                     this.fileName);
+            System.out.println("FOOOO: " + EventManager.EventMethodHelper.methodName(advice.mopSpec, event,
+                    this.fileName));
             ret += "(";
 
             // Parameters
