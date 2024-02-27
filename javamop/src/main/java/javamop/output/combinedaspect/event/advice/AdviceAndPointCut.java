@@ -418,5 +418,23 @@ public class AdviceAndPointCut {
         return advices;
     }
 
+    public MOPVariable getCommonPointcut() {
+        return commonPointcut;
+    }
 
+    public MOPParameters getParameters() {
+        return parameters;
+    }
+
+    public AroundAdviceLocalDecl getAroundLocalDecl() {
+        return aroundLocalDecl;
+    }
+
+    public MOPParameters getThreadVars() {
+        return threadVars;
+    }
+
+    public LinkedList<EventDefinition> getEvents() {
+        return events;
+    }
 }
