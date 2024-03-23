@@ -17,6 +17,7 @@ function build_agent() {
     # This is how to build JavaMOP agents as of 03/23/2016.
     # https://github.com/runtimeverification/javamop/blob/master/docs/JavaMOPAgentUsage.md
     local prop_files=${props_dir}/*.mop
+    cp ${SCRIPT_DIR}/BaseAspect_new.aj ${SCRIPT_DIR}/BaseAspect.aj
     for spec in ${prop_files}
     do
       javamop -baseaspect ${SCRIPT_DIR}/BaseAspect.aj -emop ${spec}
