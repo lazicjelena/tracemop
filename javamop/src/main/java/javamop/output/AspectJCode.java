@@ -27,6 +27,7 @@ public class AspectJCode {
 
     public AspectJCode(String name, MOPSpecFile mopSpecFile, File baseAspectFile) throws MOPException, IOException {
         JavaMOPMain.options.baseAspect = baseAspectFile;
+        JavaMOPMain.options.emop = true;
         construct(name, mopSpecFile);
     }
 
