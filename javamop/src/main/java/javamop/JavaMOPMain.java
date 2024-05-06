@@ -291,6 +291,7 @@ public final class JavaMOPMain {
         int i = location.lastIndexOf(File.separator);
         String filePath = location.substring(0, i + 1) +
                 (name == null ? Tool.getFileName(location) : name) + suffix;
+        System.out.println("FILE-1: " + filePath);
         FileWriter f = null;
         try {
             f = new FileWriter(filePath);
