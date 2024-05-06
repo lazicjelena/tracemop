@@ -146,7 +146,7 @@ public final class JavaMOPMain {
         // file to .rvm before passing to rv-monitor.
         // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
         // NOTE: If we separate rv-monitor from JavaMOP completely, we need to revisit this.
-        // writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, options.aspectname);
+        writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, options.aspectname);
         Processor processor = new Processor(spec, mopProcessor);
         return processor;
     }
@@ -173,7 +173,6 @@ public final class JavaMOPMain {
     public static AspectJCode processSpecFileWithReturn(File file, String location) throws MOPException, IOException {
         Processor processor = getProcessorNoRVM(file, location);
         AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec);
-        System.out.println("OOOO: " + location);
         writeFile(Tool.changeIndentation(ajCode.toString(), "", "\t"), location, AJ_FILE_SUFFIX, options.aspectname);
         return ajCode;
     }
@@ -289,15 +288,12 @@ public final class JavaMOPMain {
             return;
 
         int i = location.lastIndexOf(File.separator);
-        System.out.println("FILE-3: " + i);
-        System.out.println("FILE-2: " + location.substring(0, i + 1));
         String locationString = location;
         if (i > 0) {
             locationString = location.substring(0, i + 1);
         }
         String filePath = locationString + File.separator +
                 (name == null ? Tool.getFileName(location) : name) + suffix;
-        System.out.println("FILE-1: " + filePath);
         FileWriter f = null;
         try {
             f = new FileWriter(filePath);
