@@ -8,6 +8,7 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.util.MOPException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -15,29 +16,26 @@ import java.nio.file.Files;
  * The top-level generated AspectJ code.
  */
 public class AspectJCode {
-    private final String name;
+    private String name;
 
-    private final Package packageDecl;
-    private final Imports imports;
-    private final String baseAspect;
-    private final CombinedAspect aspect;
+    private Package packageDecl;
+    private Imports imports;
+    private String baseAspect;
+    private CombinedAspect aspect;
     private boolean versionedStack = false;
-    private final SystemAspect systemAspect;
+    private SystemAspect systemAspect;
 
-    /**
-     * Construct the AspectJ code.
-     *
-     * @param name        The name of the aspect.
-     * @param mopSpecFile The specification file that will be used to build aspects.
-     * @throw MOPException If something goes wrong in generating the aspects.
-     */
-    public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException, IOException {
+    public AspectJCode(String name, MOPSpecFile mopSpecFile, File baseAspectFile) throws MOPException, IOException {
+        JavaMOPMain.options.baseAspect = baseAspectFile;
+        construct(name, mopSpecFile);
+    }
+
+    private void construct(String name, MOPSpecFile mopSpecFile) throws IOException, MOPException {
+        //init the base aspect
+        this.baseAspect = initBaseAspect();
         this.name = name;
         packageDecl = new Package(mopSpecFile);
         imports = new Imports(mopSpecFile);
-
-        //init the base aspect
-        this.baseAspect = initBaseAspect();
 
         for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
 
@@ -53,6 +51,17 @@ public class AspectJCode {
         } else {
             systemAspect = null;
         }
+    }
+
+    /**
+     * Construct the AspectJ code.
+     *
+     * @param name        The name of the aspect.
+     * @param mopSpecFile The specification file that will be used to build aspects.
+     * @throw MOPException If something goes wrong in generating the aspects.
+     */
+    public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException, IOException {
+        construct(name, mopSpecFile);
     }
 
     private String initBaseAspect() throws IOException {

@@ -6,6 +6,7 @@
 
 package javamop.output;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -130,13 +131,14 @@ public class MOPProcessor {
      * main use case is TinyMOP
      *
      * @param mopSpecFile The parameter to convert.
+     * @param baseAspect
      * @return An object representation of the generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
-    public AspectJCode generateAJFileWithReturn(MOPSpecFile mopSpecFile) throws MOPException, IOException {
+    public AspectJCode generateAJFileWithReturn(MOPSpecFile mopSpecFile, File baseAspect) throws MOPException, IOException {
         registerAndValidate(mopSpecFile);
         // Generate output code
-        AspectJCode aspectJCode = new AspectJCode(name, mopSpecFile);
+        AspectJCode aspectJCode = new AspectJCode(name, mopSpecFile, baseAspect);
         return aspectJCode;
     }
 }

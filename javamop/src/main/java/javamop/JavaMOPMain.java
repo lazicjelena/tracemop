@@ -170,9 +170,10 @@ public final class JavaMOPMain {
      * @param file     an absolute path of a specification file
      * @param location an absolute path for result file
      */
-    public static AspectJCode processSpecFileWithReturn(File file, String location) throws MOPException, IOException {
+    public static AspectJCode processSpecFileWithReturn(File file, String location, File baseAspect)
+            throws MOPException, IOException {
         Processor processor = getProcessorNoRVM(file, location);
-        AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec);
+        AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec, baseAspect);
         writeFile(Tool.changeIndentation(ajCode.toString(), "", "\t"), location, AJ_FILE_SUFFIX, options.aspectname);
         return ajCode;
     }
