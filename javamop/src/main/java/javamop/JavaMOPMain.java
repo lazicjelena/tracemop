@@ -133,6 +133,24 @@ public final class JavaMOPMain {
         return processor;
     }
 
+    private static Processor getProcessorNoRVM(File file, String location) throws MOPException {
+        MOPNameSpace.init();
+        MOPSpecFile spec = SpecExtractor.parse(file);
+
+        if (options.aspectname == null) {
+            options.aspectname = Tool.getFileName(file.getAbsolutePath());
+        }
+        // We shouldn't use the name bound to the -n option for renaming the .mop
+        MOPProcessor mopProcessor = new MOPProcessor(options.aspectname);
+
+        // file to .rvm before passing to rv-monitor.
+        // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
+        // NOTE: If we separate rv-monitor from JavaMOP completely, we need to revisit this.
+        // writeFile(mopProcessor.generateRVFile(spec), location, RVM_FILE_SUFFIX, options.aspectname);
+        Processor processor = new Processor(spec, mopProcessor);
+        return processor;
+    }
+
     private static class Processor {
         public final MOPSpecFile spec;
         public final MOPProcessor mopProcessor;
@@ -153,7 +171,7 @@ public final class JavaMOPMain {
      * @param location an absolute path for result file
      */
     public static AspectJCode processSpecFileWithReturn(File file, String location) throws MOPException, IOException {
-        Processor processor = getProcessor(file, location);
+        Processor processor = getProcessorNoRVM(file, location);
         AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec);
         writeFile(Tool.changeIndentation(ajCode.toString(), "", "\t"), location, AJ_FILE_SUFFIX, options.aspectname);
         return ajCode;
