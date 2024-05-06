@@ -295,7 +295,7 @@ public final class JavaMOPMain {
         if (i > 0) {
             locationString = location.substring(0, i + 1);
         }
-        String filePath = locationString +
+        String filePath = locationString + File.separator +
                 (name == null ? Tool.getFileName(location) : name) + suffix;
         System.out.println("FILE-1: " + filePath);
         FileWriter f = null;
