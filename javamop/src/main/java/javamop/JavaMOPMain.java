@@ -173,6 +173,7 @@ public final class JavaMOPMain {
     public static AspectJCode processSpecFileWithReturn(File file, String location) throws MOPException, IOException {
         Processor processor = getProcessorNoRVM(file, location);
         AspectJCode ajCode = processor.mopProcessor.generateAJFileWithReturn(processor.spec);
+        System.out.println("OOOO: " + location);
         writeFile(Tool.changeIndentation(ajCode.toString(), "", "\t"), location, AJ_FILE_SUFFIX, options.aspectname);
         return ajCode;
     }
