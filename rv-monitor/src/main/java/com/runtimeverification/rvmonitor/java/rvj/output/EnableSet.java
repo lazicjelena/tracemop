@@ -67,7 +67,7 @@ public class EnableSet {
      * @param logicResultEnableSets the intermediate representation of the (co)enable set
      * @return the property parameter enable set
      */
-    private Map<String, RVMParameterSet> parseSets(String logicResultEnableSets) {
+    public Map<String, RVMParameterSet> parseSets(String logicResultEnableSets) {
         Map<String, RVMParameterSet> ret = new HashMap<String, RVMParameterSet>();
 
         String patternStr = "\\s*(\\w+)\\s*=\\s*\\[\\s*(\\[\\s*(\\w+\\s*(\\,\\s*\\w+\\s*)*)?\\s*\\](\\s*\\,\\s*\\[\\s*(\\w+\\s*(\\,\\s*\\w+\\s*)*)?\\s*\\])*)\\]";
