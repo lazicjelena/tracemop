@@ -69,7 +69,7 @@ The output directory contains 4 sub-directories:
 | locations.txt       | maps short location IDs to actual line of code      |
 | specs-frequency.csv | maps trace IDs to specs and frequencies             |
 | specs-test.csv      | maps trace IDs to tests that generated the traces   |
-| unique-traces.txt   | list of unique traces (trace ID, frequench, tracce) |
+| unique-traces.txt   | list of unique traces (trace ID, frequench, trace) |
 
 If TraceMOP raised violations during RV, TraceMOP will save the violations to file: `project/violation-counts`
 
