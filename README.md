@@ -29,6 +29,14 @@ There are two ways to use TraceMOP at this time. In the future, we will add docu
 
    b. `docker run -it tracemop /bin/bash`
 
+   c. `bash setup.sh`  # Run inside Docker container
+
+   Then, run the following commands in a new terminal window:
+
+   d. `docker ps`  # get container id
+
+   e. `docker commit <container-id> tracemop`
+
 ## Using TraceMOP to monitor Maven projects
 
 1. **Run with trace collection.** Run the following commands **inside** Docker container:

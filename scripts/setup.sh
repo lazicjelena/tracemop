@@ -6,11 +6,7 @@ TRACEMOP_DIR="${SCRIPT_DIR}/tracemop"
 function clone_repository() {
   echo "Cloning tracemop repository"
   pushd ${SCRIPT_DIR}
-  git clone https://github.com/SoftEngResearch/tracemop_internal tracemop
-  # TODO: remove this after merging
-  pushd tracemop
-  git checkout trie
-  popd
+  git clone https://github.com/SoftEngResearch/tracemop tracemop
   popd
 }
 
