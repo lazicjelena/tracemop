@@ -18,16 +18,16 @@ function install() {
     STATS="no-stats"
   fi
 
-  if [[ ! -f /tmp/TRACEMOP_INSTALLED ]]; then
+  if [[ ! -f ${TRACK}-${STATS}-agent.jar ]]; then
     # Install TraceMOP's dependency
     echo "Install new JavaParser"
     bash ${SCRIPT_DIR}/install-javaparser.sh
-
-    # Install TraceMOP
-    pushd ${SCRIPT_DIR}/../ &> /dev/null
-    mvn clean install -DskipTests
-    popd &> /dev/null
   fi
+  
+  # Install TraceMOP
+  pushd ${SCRIPT_DIR}/../ &> /dev/null
+  mvn clean install -DskipTests
+  popd &> /dev/null
   
   # Build agent using TraceMOP
   export PATH=${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/bin:${SCRIPT_DIR}/../javamop/target/release/javamop/javamop/bin:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor-rt.jar:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor.jar:${PATH}
@@ -58,4 +58,3 @@ function install() {
 }
 
 install
-touch /tmp/TRACEMOP_INSTALLED

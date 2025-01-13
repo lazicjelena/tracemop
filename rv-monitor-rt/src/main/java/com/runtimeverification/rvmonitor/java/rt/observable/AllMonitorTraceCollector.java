@@ -61,7 +61,7 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
             locationMapWriter.close();
             locationMapWriter.flush();
         } catch (Exception ex) {
-            printError(Arrays.toString(ex.getStackTrace()));
+            printError(ex + "\n" + Arrays.toString(ex.getStackTrace()));
         }
     }
 

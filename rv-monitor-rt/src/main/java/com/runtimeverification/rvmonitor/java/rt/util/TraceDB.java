@@ -19,6 +19,8 @@ public interface TraceDB {
 
     default void setCurrentTest(String test) {}
 
+    default List<String> get(String monitorID) { return null; }
+
     void createTable();
 
     int uniqueTraces();

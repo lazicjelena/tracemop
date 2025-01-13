@@ -14,6 +14,7 @@ PATH_TO_EXTENSION=$6
 PROJECT_NAME=$(echo ${REPO} | tr / -)
 
 ALREADY_CHECKED=false
+TMP_DIR=/tmp/tracemop-${PROJECT_NAME}
 
 if [[ -z ${OUTPUT_DIR} ]]; then
   echo "Usage: bash collect_traces.sh <repo> <sha> <output-dir> [timed: false] [per-test: false] [path-to-javamop-extension]"
@@ -57,6 +58,10 @@ function clone() {
   fi
   pushd project &> /dev/null
   git checkout ${SHA} &>> ${OUTPUT_DIR}/logs/clone.log
+  
+  if [[ -f ${SCRIPT_DIR}/treat_special.sh ]]; then
+    bash ${SCRIPT_DIR}/treat_special.sh ${OUTPUT_DIR}/project ${PROJECT_NAME}
+  fi
 }
 
 function install() {
@@ -71,12 +76,14 @@ function initial_test() {
   if [[ ${ALREADY_CHECKED} == "true" ]]; then
     return 0
   fi
+  
+  mkdir -p ${TMP_DIR} && chmod -R +w ${TMP_DIR} && rm -rf ${TMP_DIR} && mkdir -p ${TMP_DIR}
 
   (time mvn test-compile -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/compile.log
   if [[ ${TIMED} == "true" ]]; then
     echo "[TRACEMOP] Running surefire:test once to download dependency"
     export ADD_AGENT=0
-    (time mvn surefire:test -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/initial-test.log
+    (time mvn surefire:test -Djava.io.tmpdir=${TMP_DIR} -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/initial-test.log
     local status=$?
 #    (time mvn surefire:test -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -DreuseForks=false -DthreadCountMethods=1 -Dparallel=methods -DforkCount=1 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/initial-test.log
     if [[ ${status} -ne 0 ]]; then
@@ -98,11 +105,12 @@ function collect() {
   mkdir -p ${TRACEDB_PATH}
   
   echo "[TRACEMOP] Collecting traces"
+  mkdir -p ${TMP_DIR} && chmod -R +w ${TMP_DIR} && rm -rf ${TMP_DIR} && mkdir -p ${TMP_DIR}
   local start=$(date +%s%3N)
   if [[ ${PER_TEST} == "true" ]]; then
     collect_per_test
   else
-    (time mvn surefire:test -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/traces.log
+    (time mvn surefire:test -Djava.io.tmpdir=${TMP_DIR} -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/traces.log
     local status=$?
     
     if [[ ${status} -ne 0 ]]; then
@@ -122,9 +130,10 @@ function collect_per_test() {
   for test_class in $(ls target/surefire-reports/*.xml); do
     for test_case in $(python3 ${SCRIPT_DIR}/get_junit_testcases.py ${test_class}); do
       echo "[TRACEMOP] collecting ${test_case}"
+      mkdir -p ${TMP_DIR} && chmod -R +w ${TMP_DIR} && rm -rf ${TMP_DIR} && mkdir -p ${TMP_DIR}
       local start=$(date +%s%3N)
       
-      (time mvn surefire:test -Dtest=${test_case} -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/test-${test_case}.log
+      (time mvn surefire:test -Djava.io.tmpdir=${TMP_DIR} -Dtest=${test_case} -Dmaven.repo.local=${OUTPUT_DIR}/repo -Dsurefire.exitTimeout=86400 -Dmaven.ext.class.path=${PATH_TO_EXTENSION}) &> ${OUTPUT_DIR}/logs/test-${test_case}.log
       local status=$?
       if [[ ${status} -ne 0 ]]; then
         echo "[TRACEMOP] ERROR: Unable to collect traces for test ${test_case}"

@@ -47,8 +47,10 @@ function move_violations() {
 
 mkdir -p ${OUTPUT_DIR}/logs
 
+CMD_PID=0
 if [[ ${TIMED} == "true" ]]; then
   bash ${SCRIPT_DIR}/monitor_memory.sh ${OUTPUT_DIR}/logs/memory.log &
+  CMD_PID=$!
 fi
 
 if [[ ${COLLECT_TRACES} == "true" ]]; then
@@ -60,7 +62,23 @@ if [[ ${COLLECT_TRACES} == "true" ]]; then
 else
   bash ${SCRIPT_DIR}/not_collect_traces.sh ${REPO} ${SHA} ${OUTPUT_DIR} ${TIMED} ${STATS}
   
-  mkdir -p ${OUTPUT_DIR}/logs/violations/mop
-  cd ${OUTPUT_DIR}/project
-  move_violations ${OUTPUT_DIR}/logs/violations/mop
+  if [[ ${STATS} == "javamop" ]]; then
+    mkdir -p ${OUTPUT_DIR}/logs/violations/javamop
+    cd ${OUTPUT_DIR}/project
+    move_violations ${OUTPUT_DIR}/logs/violations/javamop
+  else
+    mkdir -p ${OUTPUT_DIR}/logs/violations/mop
+    cd ${OUTPUT_DIR}/project
+    move_violations ${OUTPUT_DIR}/logs/violations/mop
+  fi
+fi
+
+if [[ ${CMD_PID} -ne 0 ]]; then
+  if [[ -f ${OUTPUT_DIR}/logs/memory.log ]]; then
+    echo "Killing memory monitor PID: ${CMD_PID}. Max memory usage is $(cat ${OUTPUT_DIR}/logs/memory.log)"
+  else
+    echo "Killing memory monitor PID: ${CMD_PID}"
+  fi
+
+  kill -9 ${CMD_PID}
 fi

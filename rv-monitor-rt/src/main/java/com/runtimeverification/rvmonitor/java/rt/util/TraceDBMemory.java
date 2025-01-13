@@ -48,6 +48,11 @@ public class TraceDBMemory implements TraceDB {
     }
 
     @Override
+    public List<String> get(String monitorID) {
+        return monitorToTrace.computeIfAbsent(monitorID, k -> new ArrayList<>());
+    }
+
+    @Override
     public void replace(String monitorID, List<String> trace) {
         lock.lock();
         if (allowUpdate)

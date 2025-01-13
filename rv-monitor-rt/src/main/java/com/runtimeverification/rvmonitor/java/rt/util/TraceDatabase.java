@@ -44,6 +44,11 @@ public class TraceDatabase implements TraceDB {
         }
     }
 
+    public void calledHandler(String monitorID) {
+        System.out.println("monitorID: " + monitorID + ": called handler");
+        System.out.println("Trace: " + database.get(monitorID));
+    }
+
     @Override
     public void put(String monitorID, String trace, int length) {
         database.put(monitorID, trace, length);

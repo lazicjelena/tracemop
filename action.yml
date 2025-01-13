@@ -1,0 +1,71 @@
+name: 'TraceMOP Action'
+description: 'Run Maven project with TraceMOP'
+inputs:
+  collect-traces:
+    description: 'Whether to collect traces using TraceMOP'
+    required: true
+    default: true
+  output-directory:
+    description: 'Output directory for traces'
+    required: true
+    default: ${{ github.workspace }}/traces
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install TraceMOP
+      run: |
+        echo "::group::Install TraceMOP"
+        mvn install:install-file -Dfile=${{ github.action_path }}/plugin/src/main/resources/track-no-stats-agent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
+        echo "::endgroup::"
+      shell: bash
+
+    - name: Setup extension and agent
+      run: |
+        echo "::group::Setup extension"
+        cp ${{ github.action_path }}/plugin/src/main/resources/javamop-extension-1.0.jar $(mvn --version | grep "Maven home" | cut -d ' ' -f 3)/lib/ext
+        echo "::endgroup::"
+
+        echo "::group::Setup agent"
+        if [[ ${COLLECT_TRACES} == true ]]; then
+          mvn install:install-file -Dfile=${{ github.action_path }}/plugin/src/main/resources/track-no-stats-agent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
+        else
+          mvn install:install-file -Dfile=${{ github.action_path }}/plugin/src/main/resources/no-track-no-stats-agent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
+        fi
+        echo "::endgroup::"
+      shell: bash
+      env:
+        COLLECT_TRACES: ${{ inputs.collect-traces }}
+
+    - name: Setup TraceMOP
+      run: |
+        echo "Output directory is ${OUTPUT_DIRECTORY}"
+        mkdir -p ${OUTPUT_DIRECTORY}
+        echo -e "db=memory\ndumpDB=false" > ${{ github.workspace }}/.trace-db.config
+        
+        echo "TRACEDB_CONFIG_PATH=${{ github.workspace }}/.trace-db.config" >> ${GITHUB_ENV}
+        echo "TRACEDB_PATH=${OUTPUT_DIRECTORY}/all-traces" >> ${GITHUB_ENV}
+        echo "TRACEDB_RANDOM=1" >> ${GITHUB_ENV}
+        echo "COLLECT_MONITORS=1" >> ${GITHUB_ENV}
+        echo "COLLECT_TRACES=1" >> ${GITHUB_ENV}
+        echo "RVMLOGGINGLEVEL=UNIQUE" >> ${GITHUB_ENV}
+      shell: bash
+      env:
+        OUTPUT_DIRECTORY: ${{ inputs.output-directory }}
+    - name: Add exit hook
+      uses: pyTooling/Actions/with-post-step@v3.1.1
+      with:
+        main: |
+          cd ${{ github.action_path }}/.github/scripts/
+          echo "Adding exit hook"
+          npm install @actions/artifact@2.1.11
+          cd ${{ github.workspace }}
+        post: |
+          echo "Processing traces and violations"
+          bash ${{ github.action_path }}/.github/scripts/post.sh ${OUTPUT_DIRECTORY} ${{ github.action_path }}
+          cd ${{ github.action_path }}/.github/scripts/
+          tar -czf traces.tar.gz ${OUTPUT_DIRECTORY} &> /dev/null
+          node post.js
+          cd ${{ github.workspace }}
+      env:
+        OUTPUT_DIRECTORY: ${{ inputs.output-directory }}
