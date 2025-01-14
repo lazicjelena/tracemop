@@ -17,6 +17,10 @@ function build_extension() {
   mkdir -p ${TRACEMOP_DIR}/extensions/
   cp target/javamop-extension-1.0.jar ${TRACEMOP_DIR}/extensions/
   popd
+
+  pushd ${TRACEMOP_DIR}/plugin
+  mvn install
+  popd
 }
 
 function build_agents() {
