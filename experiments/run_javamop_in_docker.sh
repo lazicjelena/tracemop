@@ -1,19 +1,17 @@
 #!/bin/bash
 #
 # Run JavaMOP and TraceMOP (not collecting) in Docker
-# Before running this script, run `docker login`
-# Usage: run_javamop_in_docker.sh <projects-list> <output-dir> [branch=false] [timeout=86400s]
+# Usage: run_javamop_in_docker.sh <projects-list> <output-dir> [timeout=86400s]
 #
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 
 PROJECTS_LIST=$1
 OUTPUT_DIR=$2
-BRANCH=$3
-TIMEOUT=$4
+TIMEOUT=$3
 
 function check_input() {
   if [[ ! -f ${PROJECTS_LIST} || -z ${OUTPUT_DIR} ]]; then
-    echo "Usage: run_javamop_in_docker.sh <projects-list> <output-dir> [branch=false] [timeout=86400s]"
+    echo "Usage: run_javamop_in_docker.sh <projects-list> <output-dir> [timeout=86400s]"
     exit 1
   fi
 
@@ -51,22 +49,7 @@ function run_project() {
   echo "Running ${project_name} with SHA ${sha}"
   mkdir -p ${OUTPUT_DIR}/${project_name}
 
-  local id=$(docker run -itd --name ${project_name} pigzy/workspace:tracemop)
-  docker exec -w /home/tracemop/tracemop ${id} git pull
-  if [[ $? -ne 0 ]]; then
-    echo "Unable to pull, try again in 10 seconds"
-    sleep 10
-    docker exec -w /home/tracemop/tracemop ${id} git pull
-    if [[ $? -ne 0 ]]; then
-      echo "Skip ${project_name} because script can't pull" &>> ${OUTPUT_DIR}/${project_name}/docker.log
-      return
-    fi
-  fi
-  
-  if [[ -n ${BRANCH} && ${BRANCH} != "false" ]]; then
-    docker exec -w /home/tracemop/tracemop ${id} git checkout ${BRANCH} 
-    docker exec -w /home/tracemop/tracemop ${id} git pull
-  fi
+  local id=$(docker run -itd --name ${project_name} softengresearch/tracemop-experiments)
   
   echo "Running TraceMOP"
   timeout ${TIMEOUT} docker exec -w /home/tracemop/tracemop -e M2_HOME=/home/tracemop/apache-maven -e MAVEN_HOME=/home/tracemop/apache-maven -e CLASSPATH=/home/tracemop/aspectj-1.9.7/lib/aspectjtools.jar:/home/tracemop/aspectj-1.9.7/lib/aspectjrt.jar:/home/tracemop/aspectj-1.9.7/lib/aspectjweaver.jar: -e PATH=/home/tracemop/apache-maven/bin:/usr/lib/jvm/java-8-openjdk/bin:/home/tracemop/aspectj-1.9.7/bin:/home/tracemop/aspectj-1.9.7/lib/aspectjweaver.jar:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ${id} timeout ${TIMEOUT} bash scripts/run_tracemop.sh ${repo} ${sha} /home/tracemop/output false true false &>> ${OUTPUT_DIR}/${project_name}/docker.log

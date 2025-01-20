@@ -2,6 +2,10 @@
 
 This repository allows to do explicit-trace runtime verification, and it is built on top of improved and integrated source code that was forked off the official [JavaMOP](https://github.com/runtimeverification/javamop) and [RV-Monitor](https://github.com/runtimeverification/rv-monitor) repositories. Those repositories are *no longer maintained but we have ensured to preserve all their Java-related functionality here (read on to see how to run TraceMOP to get only those existing functionality)*.
 
+## Experimental scripts and data
+
+You can find our experimental scripts and data in this [directory](experiments).
+
 ## Prerequisites
 
 We have tested TraceMOP on:
