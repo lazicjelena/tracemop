@@ -13,6 +13,7 @@ bash install.sh true false   # This will generate a track-no-stats-agent.jar fil
 
 ## Build a TraceMOP agent that will not track traces
 ```bash
+cd scripts
 bash install.sh false false  # This will generate a no-track-no-stats-agent.jar
 ```
 
