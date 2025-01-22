@@ -28,6 +28,6 @@ export TRACEDB_CONFIG_PATH=${OUTPUT_DIRECTORY}/.trace-db.config
 export TRACEDB_RANDOM=1 && export COLLECT_MONITORS=1 && export COLLECT_TRACES=1
 mkdir -p ${TRACEDB_PATH}
 
-# Run Main.java with TraceMOP
+# In your project directory, run Main.java with TraceMOP
 java -javaagent:${PATH-TO-AGENT}/tracemop-agent.jar Main  # replace ${PATH-TO-AGENT} with the absolute path to TraceMOP's Java agent. 
 ```
