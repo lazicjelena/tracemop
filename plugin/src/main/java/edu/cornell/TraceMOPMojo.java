@@ -64,7 +64,7 @@ public class TraceMOPMojo extends AbstractMojo {
                     version("3.1.2")
                 ),
                 goal("test"),
-                configuration(element(name("argLine"), "-javaagent:${settings.localRepository}/javamop-agent/javamop-agent/1.0/" + agentName + " -Xmx500g -XX:-UseGCOverheadLimit")),
+                configuration(element(name("argLine"), "-javaagent:${settings.localRepository}/javamop-agent/javamop-agent/1.0/" + agentName + " -Xmx4g -XX:-UseGCOverheadLimit")),
                 executionEnvironment(
                     project,
                     session,
